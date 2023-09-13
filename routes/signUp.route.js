@@ -4,7 +4,7 @@ const sing = require('../controllers/auth/signUp');
 const  exists = require('../middleware/userexists')
 route.get('/get/users', sing.getuser);
 route.post('/add/user',exists.checkIfUserExists, sing.signUp);
-// route.post('/delete/task',task.deletetask)
-// route.post('/update/task',task.updatetask)
+route.post('/delete/user',sing.deleteuser)
+route.post('/update/user',sing.updateuser)
 
 module.exports = route;
