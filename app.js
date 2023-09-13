@@ -14,6 +14,7 @@ const connect = require('./connection');
 app.use(require('./routes/task.route'))
 app.use(require('./routes/category.route'))
 app.use(require('./routes/signUp.route'))
+app.use(require('./routes/password.route'))
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT} `);
 });
