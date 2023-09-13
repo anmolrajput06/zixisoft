@@ -67,6 +67,39 @@ function changepassword(req,res)
 
 function resetpasswoed(req,res)
 {
+    const { email, newPassword } = req.body;
 
+    // Check if the request body is missing fields
+    if (!email || !newPassword) {
+      return res.status(400).json({ error: 'Missing required fields', status: false });
+    }
+  
+    // Hash the new password
+    bcrypt.hash(newPassword, 10, (hashErr, hashedPassword) => {
+      if (hashErr) {
+        console.error('Password hashing failed: ' + hashErr);
+        return res.status(500).json({ error: 'Internal server error', status: false });
+      }
+  
+      // Update the user's password in the database
+      connection.query(
+        'UPDATE registration_users_tb SET password = ? WHERE email = ?',
+        [hashedPassword, email],
+        (updateErr, updateResult) => {
+          if (updateErr) {
+            console.error('Error updating password: ' + updateErr);
+            return res.status(500).json({ error: 'Error updating password', status: false });
+          }
+  
+          if (updateResult.affectedRows === 0) {
+            // If no rows were affected, the user with the provided email does not exist
+            return res.status(404).json({ error: 'User not found', status: false });
+          }
+  
+          console.log('Password reset successfully.');
+          return res.status(200).json({ status: true, msg: 'Password reset successfully' });
+        }
+      );
+    });
 }
 module.exports= {changepassword,resetpasswoed}
