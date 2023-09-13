@@ -43,7 +43,6 @@ function deletetask(req, res) {
             return res.send({ data: "please enter your id", status: false })
 
         }
-
         connection.query(`select id  FROM task WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
@@ -61,8 +60,6 @@ function deletetask(req, res) {
             else {
                 return res.send({ msg: "not exist id ", status: true })
             }
-
-
         })
 
     } catch (error) {
