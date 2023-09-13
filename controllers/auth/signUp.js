@@ -1,28 +1,39 @@
 const connection = require('../../connection')
+const bcrypt = require('bcrypt');
 
 function signUp(req, res) {
     try {
-        const { name, email, mobile_number } = req.body;
+        const { name, email, mobile_number,password } = req.body;
 
         // Perform the database insertion
-        if (!req.body) {
-            return res.send({ error: 'body empty', status: false });
+        if (!name || !email || !mobile_number || !password) {
+            return res.status(400).json({ error: 'Missing required fields', status: false });
         }
-        connection.query(
-            'INSERT INTO registration_users_tb (name, email, mobile_number) VALUES (?, ?, ?)',
-            [name, email, mobile_number],
-            (err, result) => {
-                if (err) {
-                    console.error('Error inserting data: ' + err);
-                    return res.send({ error: 'Error inserting data', status: false });
-                } else {
-                    console.log('Data inserted successfully.');
-                    return res.send({ data: result, status: true, msg: "registration successfully" });
-                }
+
+        bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+            if (hashErr) {
+                console.error('Password hashing failed: ' + hashErr);
+                return res.status(500).json({ error: 'Internal server error', status: false });
             }
-        );
+
+            // Perform the database insertion with the hashed password
+            connection.query(
+                'INSERT INTO registration_users_tb (name, email, mobile_number, password) VALUES (?, ?, ?, ?)',
+                [name, email, mobile_number, hashedPassword],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error inserting data: ' + err);
+                        return res.status(500).json({ error: 'Error inserting data', status: false });
+                    } else {
+                        console.log('Data inserted successfully.');
+                        return res.status(201).json({ data: result, status: true, msg: "Registration successful" });
+                    }
+                }
+            );
+        });
     }
     catch (error) {
+        console.log(error);
         return res.send({ data: error, status: false })
     }
 }
@@ -39,7 +50,7 @@ function getuser(req, res) {
 }
 function updateuser(req, res) {
     try {
-        const { id, name, email, mobile_number } = req.body;
+        const { id, name, email, mobile_number,roll_id ,status} = req.body;
         if (!id) {
             return res.send({ data: "please enter your id", status: false })
 
@@ -48,8 +59,8 @@ function updateuser(req, res) {
         connection.query(`select id  FROM registration_users_tb WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query('UPDATE registration_users_tb SET name=?, email=?, mobile_number=? WHERE id=?',
-                    [name, email, mobile_number, id], (err, result1) => {
+                connection.query('UPDATE registration_users_tb SET name=?, email=?, status=?,mobile_number=?,roll_id=? WHERE id=?',
+                    [name, email,status, mobile_number, roll_id,id], (err, result1) => {
                         console.log(result1);
                         if (result1) {
                             return res.send({ data: result1, msg: "update successfully", status: true })
