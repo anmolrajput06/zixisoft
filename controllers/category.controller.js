@@ -1,17 +1,18 @@
 const connection = require('../connection')
 
-function addtask(req, res) {
+function addcategory(req, res) {
     try {
-        const { category_select, brand_logo, task_name, task_description, price } = req.body;
+        const { category_name } = req.body;
 
         // Perform the database insertion
-        if(!req.body)
-        {
-            return res.send({ error: 'body empty', status: false });
+
+        if (!category_name) {
+            return res.send({ error: 'pleace enter category_name', status: false });
         }
         connection.query(
-            'INSERT INTO task_tb (category_select, brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
-            [category_select, brand_logo, task_name, task_description, price],
+            // 'INSERT INTO task ( brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
+            `INSERT INTO category_tb ( category_name) VALUES (?);`,
+            [category_name],
             (err, result) => {
                 if (err) {
                     console.error('Error inserting data: ' + err);
@@ -28,9 +29,9 @@ function addtask(req, res) {
     }
 }
 
-function gettask(req, res) {
+function getcategory(req, res) {
     try {
-        connection.query("SELECT * FROM `task_tb`", (err, result) => {
+        connection.query("SELECT * FROM `category_tb`", (err, result) => {
             console.log(result);
             return res.send({ data: result, status: true })
         })
@@ -40,17 +41,17 @@ function gettask(req, res) {
     }
 }
 
-function deletetask(req, res) {
+function deletecategory(req, res) {
     try {
         const { id } = req.body
         if (!id) {
             return res.send({ data: "please enter your id", status: false })
 
         }
-        connection.query(`select id  FROM task_tb WHERE id = ${id}`, (err, result) => {
+        connection.query(`select id  FROM category_tb WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query(`DELETE FROM task_tb WHERE task_tb.id = ${id}`, (err, result1) => {
+                connection.query(`DELETE FROM category_tb WHERE category_tb.id = ${id}`, (err, result1) => {
                     console.log(result1);
                     if (result1) {
                         return res.send({ data: result1, msg: "delete successfully", status: true })
@@ -72,20 +73,20 @@ function deletetask(req, res) {
     }
 }
 
-function updatetask(req, res) {
+function updatecategory(req, res) {
     try {
-        const { id, category_select, brand_logo, task_name, task_description, price } = req.body;
+        const { id, category_name } = req.body;
 
         if (!id) {
             return res.send({ data: "please enter your id", status: false })
 
         }
 
-        connection.query(`select id  FROM task_tb WHERE id = ${id}`, (err, result) => {
+        connection.query(`select id  FROM category_tb WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query('UPDATE task_tb SET category_select=?, brand_logo=?, task_name=?, task_description=?, price=? WHERE id=?',
-                    [category_select, brand_logo, task_name, task_description, price, id], (err, result1) => {
+                connection.query('UPDATE category_tb SET category_name=? WHERE id=?',
+                    [category_name, id], (err, result1) => {
                         console.log(result1);
                         if (result1) {
                             return res.send({ data: result1, msg: "update successfully", status: true })
@@ -103,6 +104,4 @@ function updatetask(req, res) {
         return res.send({ data: error, status: false })
     }
 }
-module.exports = { addtask, gettask, deletetask,updatetask }
-
-
+module.exports = { addcategory, getcategory, deletecategory, updatecategory }
