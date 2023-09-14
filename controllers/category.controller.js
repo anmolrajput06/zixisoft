@@ -3,28 +3,46 @@ const connection = require('../connection')
 function addcategory(req, res) {
     try {
 
-        if (!req.file) {
-            return res.status(400).send('No file uploaded.');
-        }
-        const { category_name,logo } = req.body;
+        // if (!req.file) {
+        //     return res.status(400).send('No file uploaded.');
+        // }
+        const { category_name, logo } = req.body;
 
         // Perform the database insertion
 
         if (!category_name) {
             return res.send({ error: 'pleace enter category_name', status: false });
         }
+
+        // Check if the category already exists in the database
         connection.query(
-            // 'INSERT INTO task ( brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
-            `INSERT INTO category_tbl ( category_name) VALUES (?);`,
+            'SELECT * FROM category_tbl WHERE category_name = ?',
             [category_name],
-            (err, result) => {
+            (err, rows) => {
                 if (err) {
-                    console.error('Error inserting data: ' + err);
-                    return res.send({ error: 'Error inserting data', status: false });
-                } else {
-                    console.log('Data inserted successfully.');
-                    return res.send({ data: result, status: true });
+                    console.error('Error checking for existing category: ' + err);
+                    return res.send({ error: 'Error checking for existing category', status: false });
                 }
+
+                // If a category with the same name exists, return an error
+                if (rows.length > 0) {
+                    return res.send({ error: 'Category already exists', status: false });
+                }
+
+                // If the category doesn't exist, insert it into the database
+                connection.query(
+                    'INSERT INTO category_tbl (category_name) VALUES (?)',
+                    [category_name],
+                    (insertErr, result) => {
+                        if (insertErr) {
+                            console.error('Error inserting data: ' + insertErr);
+                            return res.send({ error: 'Error inserting data', status: false });
+                        } else {
+                            console.log('Data inserted successfully.');
+                            return res.send({ data: result, status: true });
+                        }
+                    }
+                );
             }
         );
     }

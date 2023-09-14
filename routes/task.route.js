@@ -7,5 +7,6 @@ route.post('/add/task', task.addtask);
 route.post('/delete/task',task.deletetask)
 route.post('/update/task',task.updatetask)
 route.post('/start/task',task.starttask)
+route.post('/task_status',task.updatetaskStatus)
 
 module.exports = route;

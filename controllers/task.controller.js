@@ -103,14 +103,58 @@ function updatetask(req, res) {
     }
 }
 
-function starttask(req,res)
-{
+function updatetaskStatus(req, res) {
     try {
-        
+        const { id, user_id, task_status } = req.body;
+
+        if (!id || !user_id) {
+            return res.send({ data: "please enter your id", status: false })
+
+        }
+        connection.query(`SELECT id FROM registration_user_tb WHERE id = ?`, [user_id], (err, userResult) => {
+            if (err) {
+                console.error('Error checking user existence:', err);
+                return res.send({ msg: "An error occurred while checking user existence", status: false });
+            }
+
+            if (userResult.length === 0) {
+                return res.send({ msg: "User does not exist", status: false });
+            }
+
+            // User exists, proceed to update the task
+            connection.query(`SELECT id FROM task_tbl WHERE id = ?`, [id], (err, result) => {
+                if (err) {
+                    console.error('Error checking task existence:', err);
+                    return res.send({ msg: "An error occurred while checking task existence", status: false });
+                }
+
+                if (result.length !== 0) {
+                    connection.query('UPDATE task_tbl SET user_id=?, task_status=? WHERE id=?',
+                        [user_id, task_status, id], (err, result1) => {
+                            if (err) {
+                                console.error('Error updating task:', err);
+                                return res.send({ msg: "An error occurred while updating task", status: false });
+                            }
+
+                            return res.send({ data: result1, msg: "Update successful", status: true });
+                        });
+                } else {
+                    return res.send({ msg: "Task does not exist", status: false });
+                }
+            });
+        });
+    } catch (error) {
+        console.log('update task error ->', error);
+        return res.send({ data: error, status: false })
+    }
+}
+function starttask(req, res) {
+    try {
+
     } catch (error) {
         console.log('update task error ->', error);
     }
 }
-module.exports = { addtask, gettask, deletetask, updatetask,starttask }
+module.exports = { addtask, gettask, deletetask, updatetask, starttask, updatetaskStatus }
 
 
