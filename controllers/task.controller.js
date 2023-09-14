@@ -102,6 +102,15 @@ function updatetask(req, res) {
         return res.send({ data: error, status: false })
     }
 }
-module.exports = { addtask, gettask, deletetask, updatetask }
+
+function starttask(req,res)
+{
+    try {
+        
+    } catch (error) {
+        console.log('update task error ->', error);
+    }
+}
+module.exports = { addtask, gettask, deletetask, updatetask,starttask }
 
 

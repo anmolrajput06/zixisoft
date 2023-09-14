@@ -2,7 +2,11 @@ const connection = require('../connection')
 
 function addcategory(req, res) {
     try {
-        const { category_name } = req.body;
+
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+        }
+        const { category_name,logo } = req.body;
 
         // Perform the database insertion
 
@@ -40,6 +44,7 @@ function getcategory(req, res) {
         return res.send({ data: error, status: false })
     }
 }
+
 
 function deletecategory(req, res) {
     try {
