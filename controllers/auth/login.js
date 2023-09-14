@@ -14,7 +14,7 @@ function login(req, res) {
 
         // Query the database to retrieve the user's hashed password
         connection.query(
-            'SELECT id, email, password FROM registration_users_tb WHERE email = ?',
+            'SELECT id, email, password FROM registration_user_tb WHERE email = ?',
             [email],
             (err, results) => {
                 if (err) {

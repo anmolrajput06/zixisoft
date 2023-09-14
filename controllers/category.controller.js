@@ -11,7 +11,7 @@ function addcategory(req, res) {
         }
         connection.query(
             // 'INSERT INTO task ( brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
-            `INSERT INTO category_tb ( category_name) VALUES (?);`,
+            `INSERT INTO category_tbl ( category_name) VALUES (?);`,
             [category_name],
             (err, result) => {
                 if (err) {
@@ -31,7 +31,7 @@ function addcategory(req, res) {
 
 function getcategory(req, res) {
     try {
-        connection.query("SELECT * FROM `category_tb`", (err, result) => {
+        connection.query("SELECT * FROM `category_tbl`", (err, result) => {
             console.log(result);
             return res.send({ data: result, status: true })
         })
@@ -48,10 +48,10 @@ function deletecategory(req, res) {
             return res.send({ data: "please enter your id", status: false })
 
         }
-        connection.query(`select id  FROM category_tb WHERE id = ${id}`, (err, result) => {
+        connection.query(`select id  FROM category_tbl WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query(`DELETE FROM category_tb WHERE category_tb.id = ${id}`, (err, result1) => {
+                connection.query(`DELETE FROM category_tbl WHERE category_tbl.id = ${id}`, (err, result1) => {
                     console.log(result1);
                     if (result1) {
                         return res.send({ data: result1, msg: "delete successfully", status: true })
@@ -82,10 +82,10 @@ function updatecategory(req, res) {
 
         }
 
-        connection.query(`select id  FROM category_tb WHERE id = ${id}`, (err, result) => {
+        connection.query(`select id  FROM category_tbl WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query('UPDATE category_tb SET category_name=? WHERE id=?',
+                connection.query('UPDATE category_tbl SET category_name=? WHERE id=?',
                     [category_name, id], (err, result1) => {
                         console.log(result1);
                         if (result1) {

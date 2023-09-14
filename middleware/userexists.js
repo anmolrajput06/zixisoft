@@ -5,7 +5,7 @@ function checkIfUserExists(req, res, next) {
     const email = req.body.email; // Assuming email is sent in the request body
 
     connection.query(
-        'SELECT * FROM registration_users_tb WHERE email = ?',
+        'SELECT * FROM registration_user_tb WHERE email = ?',
         [email],
         (err, results) => {
             if (err) {

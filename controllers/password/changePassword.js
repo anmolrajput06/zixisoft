@@ -12,7 +12,7 @@ function changepassword(req,res)
   
     // Retrieve the user's hashed password from the database
     connection.query(
-      'SELECT id, password FROM registration_users_tb WHERE email = ?',
+      'SELECT id, password FROM registration_user_tb WHERE email = ?',
       [email],
       (err, results) => {
         if (err) {
@@ -46,7 +46,7 @@ function changepassword(req,res)
   
             // Update the user's password in the database
             connection.query(
-              'UPDATE registration_users_tb SET password = ? WHERE email = ?',
+              'UPDATE registration_user_tb SET password = ? WHERE email = ?',
               [hashedPassword, email],
               (updateErr, updateResult) => {
                 if (updateErr) {
@@ -83,7 +83,7 @@ function resetpasswoed(req,res)
   
       // Update the user's password in the database
       connection.query(
-        'UPDATE registration_users_tb SET password = ? WHERE email = ?',
+        'UPDATE registration_user_tb SET password = ? WHERE email = ?',
         [hashedPassword, email],
         (updateErr, updateResult) => {
           if (updateErr) {

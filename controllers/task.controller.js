@@ -2,16 +2,15 @@ const connection = require('../connection')
 
 function addtask(req, res) {
     try {
-        const { category_select, brand_logo, task_name, task_description, price } = req.body;
+        const { catagory_name, brand_logo, task_name, task_description, price } = req.body;
 
         // Perform the database insertion
-        if(!req.body)
-        {
+        if (!req.body) {
             return res.send({ error: 'body empty', status: false });
         }
         connection.query(
-            'INSERT INTO task_tb (category_select, brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
-            [category_select, brand_logo, task_name, task_description, price],
+            'INSERT INTO task_tbl (catagory_name, brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
+            [catagory_name, brand_logo, task_name, task_description, price],
             (err, result) => {
                 if (err) {
                     console.error('Error inserting data: ' + err);
@@ -30,7 +29,7 @@ function addtask(req, res) {
 
 function gettask(req, res) {
     try {
-        connection.query("SELECT * FROM `task_tb`", (err, result) => {
+        connection.query("SELECT * FROM `task_tbl`", (err, result) => {
             console.log(result);
             return res.send({ data: result, status: true })
         })
@@ -47,10 +46,10 @@ function deletetask(req, res) {
             return res.send({ data: "please enter your id", status: false })
 
         }
-        connection.query(`select id  FROM task_tb WHERE id = ${id}`, (err, result) => {
+        connection.query(`select id  FROM task_tbl WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query(`DELETE FROM task_tb WHERE task_tb.id = ${id}`, (err, result1) => {
+                connection.query(`DELETE FROM task_tbl WHERE task_tbl.id = ${id}`, (err, result1) => {
                     console.log(result1);
                     if (result1) {
                         return res.send({ data: result1, msg: "delete successfully", status: true })
@@ -74,19 +73,19 @@ function deletetask(req, res) {
 
 function updatetask(req, res) {
     try {
-        const { id, category_select, brand_logo, task_name, task_description, price } = req.body;
+        const { id, catagory_name, brand_logo, task_name, task_description, price, task_status } = req.body;
 
         if (!id) {
             return res.send({ data: "please enter your id", status: false })
 
         }
 
-        connection.query(`select id  FROM task_tb WHERE id = ${id}`, (err, result) => {
+        connection.query(`select id  FROM task_tbl WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query('UPDATE task_tb SET category_select=?, brand_logo=?, task_name=?, task_description=?, price=? WHERE id=?',
-                    [category_select, brand_logo, task_name, task_description, price, id], (err, result1) => {
-                        console.log(result1);
+                connection.query('UPDATE task_tbl SET catagory_name=?, brand_logo=?, task_name=?, task_description=?, price=? ,task_status=?WHERE id=?',
+                    [catagory_name, brand_logo, task_name, task_description, price, task_status, id], (err, result1) => {
+                        console.log(result1, err);
                         if (result1) {
                             return res.send({ data: result1, msg: "update successfully", status: true })
 
@@ -103,6 +102,6 @@ function updatetask(req, res) {
         return res.send({ data: error, status: false })
     }
 }
-module.exports = { addtask, gettask, deletetask,updatetask }
+module.exports = { addtask, gettask, deletetask, updatetask }
 
 
