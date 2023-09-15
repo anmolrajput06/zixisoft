@@ -2,15 +2,15 @@ const connection = require('../connection')
 
 function addtask(req, res) {
     try {
-        const { catagory_name, brand_logo, task_name, task_description, price } = req.body;
+        const { catagory_name, brand_logo, task_name, task_description, price, monetary_reward, associated_company_name } = req.body;
 
         // Perform the database insertion
         if (!req.body) {
             return res.send({ error: 'body empty', status: false });
         }
         connection.query(
-            'INSERT INTO task_tbl (catagory_name, brand_logo, task_name, task_description, price) VALUES (?, ?, ?, ?, ?)',
-            [catagory_name, brand_logo, task_name, task_description, price],
+            'INSERT INTO task_tbl (catagory_name, brand_logo, task_name, task_description, price,monetary_reward,associated_company_name) VALUES (?,?,?,?, ?, ?, ?)',
+            [catagory_name, brand_logo, task_name, task_description, price, monetary_reward, associated_company_name],
             (err, result) => {
                 if (err) {
                     console.error('Error inserting data: ' + err);
@@ -148,6 +148,7 @@ function updatetaskStatus(req, res) {
         return res.send({ data: error, status: false })
     }
 }
+
 function starttask(req, res) {
     try {
 

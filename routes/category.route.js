@@ -16,5 +16,6 @@ route.get('/get/category', category.getcategory);
 route.post('/add/category',upload.single('file'), category.addcategory);
 route.post('/delete/category',category.deletecategory)
 route.post('/update/category',category.updatecategory)
+route.post('/getCategoryById',category.getcategoryById)
 
 module.exports = route;

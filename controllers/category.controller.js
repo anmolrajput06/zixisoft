@@ -39,7 +39,7 @@ function addcategory(req, res) {
                             return res.send({ error: 'Error inserting data', status: false });
                         } else {
                             console.log('Data inserted successfully.');
-                            return res.send({ data: result, status: true });
+                            return res.send({ data: result, status: true ,message:"added"});
                         }
                     }
                 );
@@ -63,7 +63,18 @@ function getcategory(req, res) {
     }
 }
 
-
+function getcategoryById(req, res) {
+    const { id } = req.body
+    try {
+        connection.query(`select * FROM category_tbl WHERE id = ${id}`, (err, result) => {
+            console.log(result);
+            return res.send({ data: result, status: true })
+        })
+    }
+    catch (error) {
+        return res.send({ data: error, status: false })
+    }
+}
 function deletecategory(req, res) {
     try {
         const { id } = req.body
@@ -127,4 +138,4 @@ function updatecategory(req, res) {
         return res.send({ data: error, status: false })
     }
 }
-module.exports = { addcategory, getcategory, deletecategory, updatecategory }
+module.exports = { addcategory, getcategory, deletecategory, updatecategory ,getcategoryById}
