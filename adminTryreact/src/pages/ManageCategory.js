@@ -3,6 +3,8 @@ import logocomp from "../assets/img/logocomp.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import SweetAlert from "react-bootstrap-sweetalert";
+import Swal from "sweetalert2";
+
 const ManageCategory = () => {
   const [categoryData, setCategoryData] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
@@ -33,22 +35,39 @@ const ManageCategory = () => {
         id: id
       });
       console.log(response.data);
-      setShowAlert(true);
-
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire(
+            'Deleted!',
+            'Your file has been deleted.',
+            'success'
+          )
+        }
+      })
+      // window.location.reload()
     } catch (error) {
       console.error(error);
     }
   };
   const handleCloseAlert = () => {
     setShowAlert(false);
+    window.location.reload()
   };
   const LoadEdit = (_id) => {
     const formData = {
       id: _id
     };
-    console.log('vjffj',formData);
+    console.log('vjffj', formData);
     navigate(`/UpdateCategory/${formData.id}`);
-};
+  };
   return (
     <>
       <div className="page-wrapper">
@@ -112,14 +131,14 @@ const ManageCategory = () => {
                               {/* Add more table cells for other properties if needed */}
                               <td>
                                 <div>
-                                  <img src={logocomp} alt="" />
+                                  <img src={`http://localhost:3000/uploads/${item.logo}`} style={{ height: "80px", width: "120px" }} alt='' />
                                 </div>
                               </td>
                               <td>
                                 <div>
                                   <button className="delvr-button" fdprocessedid="fiuu4q"
-                                  
-                                  onClick={() => LoadEdit(item.id)}>
+
+                                    onClick={() => LoadEdit(item.id)}>
                                     Edit
                                   </button>
                                   <button

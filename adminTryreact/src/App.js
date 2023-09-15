@@ -12,7 +12,10 @@ import PendingStatus from "./pages/PendingStatus";
 import ApproveStatus from "./pages/ApproveStatus";
 import DisaproveStatus from "./pages/DisaproveStatus";
 import Content from "./pages/Content";
-import UpdateCategory from "./pages/UpdateCategory";
+import TaskDetails from "./pages/TaskDetails";
+import TaskEdit from "./pages/TaskEdit.js";
+import Transaction from "./pages/Transaction";
+
 function App() {
   return (
     <>
@@ -31,7 +34,9 @@ function App() {
             <Route path="/approve-status" element={<ApproveStatus />} />
             <Route path="/disapprove-status" element={<DisaproveStatus />} />
             <Route path="/content" element={<Content />} />
-            <Route path="/UpdateCategory/:id" element={<UpdateCategory/>}/>
+            <Route path="/task-details" element={<TaskDetails />} />
+            <Route path="/task-edit" element={<TaskEdit />} />
+            <Route path="/transaction" element={<Transaction />} />
           </Routes>
           <Footer />
         </>

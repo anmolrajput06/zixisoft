@@ -99,6 +99,16 @@ function Sidebar() {
                 </Link>
               </li>
 
+              <li className="menu-label">Financial Transaction</li>
+              <li>
+                <Link to="/transaction">
+                  <div className="parent-icon">
+                    <img src={stocktrnsfericon} alt="" />
+                  </div>
+                  <div className="menu-title">Transaction </div>
+                </Link>
+              </li>
+
               <li className="menu-label">Content</li>
               <li>
                 <Link to="/content">

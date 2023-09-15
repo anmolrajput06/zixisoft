@@ -1,15 +1,24 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import Swal from "sweetalert2";
+import SweetAlert from "react-bootstrap-sweetalert";
 function CreateCategory(props) {
   if (props.data) {
     var propsObject = props.data;
 
   }
   const [categoryName, setCategoryName] = useState("");
+  const [logoFile, setLogoFile] = useState(null); // State to store the selected logo file
+  const [showAlert, setShowAlert] = useState(false);
   const [fields, setFields] = useState({});
   const handleCategoryNameChange = (event) => {
     setCategoryName(event.target.value);
+  };
+
+  const handleLogoChange = (event) => {
+    // Get the selected file from the input element
+    const selectedFile = event.target.files[0];
+    setLogoFile(selectedFile); // Update the state with the selected file
   };
   useEffect(() => {
     if (propsObject && propsObject !== {} && propsObject !== undefined) {
@@ -17,26 +26,39 @@ function CreateCategory(props) {
     }
 
   }, [propsObject]);
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Create an object with the category_name field only
-    const requestData = {
-      category_name: categoryName,
-    };
-
+    if (!categoryName || !logoFile) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Category Name and Logo are required fields',
+      });
+      return; // Stop form submission
+    }
+    const formData = new FormData();
+    formData.append("category_name", categoryName);
+    formData.append("logo", logoFile);
     axios
-      .post("http://localhost:8000/add/category", requestData)
+      .post("http://localhost:8000/add/category", formData)
       .then((response) => {
-        console.log(response.data);
-        window.location.href = "/manage-category";
+
+        console.log(response.data.message,'999999999999999999999999999');
+        if (response.data.message === "Category successfully add") {
+          // API request was successful, show SweetAlert for success
+          window.location.href = "/manage-category";
+        }
+        
       })
       .catch((error) => {
-        console.error(error);
+
       });
   };
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
 
-  
   return (
     <>
       <div className="page-wrapper">
@@ -54,8 +76,8 @@ function CreateCategory(props) {
             <div className="col-md-12">
               <div className="card mt-3">
                 <div className="card-body">
-                  <div className="row">
                     <form onSubmit={handleSubmit}>
+                  <div className="row">
                       <div className="col-md-4 col-sm-6">
                         <div className="label-font mb-3">
                           <label htmlFor className="form-label">
@@ -80,7 +102,7 @@ function CreateCategory(props) {
                             type="file"
                             className="form-control"
                             id="logo"
-                            // onChange={handleLogoChange}
+                            onChange={handleLogoChange} // Call handleLogoChange when the file input changes
                           />
                         </div>
                       </div>
@@ -99,11 +121,20 @@ function CreateCategory(props) {
                               <i />
                               Cancel
                             </a>
+                            {showAlert && (
+                              <SweetAlert
+                                success
+                                title="Category Deleted"
+                                onConfirm={handleCloseAlert}
+                              >
+                                Category has been deleted successfully!
+                              </SweetAlert>
+                            )}
                           </div>
                         </div>
                       </div>
-                    </form>
                   </div>
+                    </form>
                 </div>
               </div>
             </div>

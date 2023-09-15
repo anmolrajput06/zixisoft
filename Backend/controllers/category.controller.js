@@ -2,16 +2,15 @@ const connection = require('../connection')
 
 function addcategory(req, res) {
     try {
-
-        // if (!req.file) {
-        //     return res.status(400).send('No file uploaded.');
-        // }
-        const { category_name, logo } = req.body;
-
+        console.log(req.body);
+        const { category_name } = req.body;
+        const file = req.files;
+        if (file.logo === undefined) {
+            return res.status(200).json({ error: true, message: "Please select any file", data: null })
+        }
         // Perform the database insertion
-
-        if (!category_name) {
-            return res.send({ error: 'pleace enter category_name', status: false });
+        if (category_name === "") {
+            return res.status(200).json({ error: true, message: "Please enter the category name", data: null })
         }
 
         // Check if the category already exists in the database
@@ -20,29 +19,28 @@ function addcategory(req, res) {
             [category_name],
             (err, rows) => {
                 if (err) {
-                    console.error('Error checking for existing category: ' + err);
-                    return res.send({ error: 'Error checking for existing category', status: false });
-                }
-
-                // If a category with the same name exists, return an error
-                if (rows.length > 0) {
-                    return res.send({ error: 'Category already exists', status: false });
-                }
-
-                // If the category doesn't exist, insert it into the database
-                connection.query(
-                    'INSERT INTO category_tbl (category_name) VALUES (?)',
-                    [category_name],
-                    (insertErr, result) => {
-                        if (insertErr) {
-                            console.error('Error inserting data: ' + insertErr);
-                            return res.send({ error: 'Error inserting data', status: false });
-                        } else {
-                            console.log('Data inserted successfully.');
-                            return res.send({ data: result, status: true ,message:"added"});
-                        }
+                    // return res.send({ error: 'Error checking for existing category', status: false });
+                    return res.status(200).json({ error: true, data: err })
+                } else {
+                    // If a category with the same name exists, return an error
+                    if (rows.length > 0) {
+                        return res.send({ error: 'Category already exists', status: false });
+                    } else {
+                        // If the category doesn't exist, insert it into the database
+                        connection.query(
+                            'INSERT INTO category_tbl (category_name, logo) VALUES (?,?)',
+                            [category_name, file.logo[0].filename],
+                            (insertErr, result) => {
+                                if (insertErr) {
+                                    return res.send({ error: 'Error inserting data', status: false });
+                                } else {
+                                    console.log("insert");
+                                    return res.status(200).json({error: false, message: "Category successfully add", data: null})
+                                }
+                            }
+                        );
                     }
-                );
+                }
             }
         );
     }
@@ -110,7 +108,7 @@ function deletecategory(req, res) {
 function updatecategory(req, res) {
     try {
         const { id, category_name } = req.body;
-
+        const file = req.files;
         if (!id) {
             return res.send({ data: "please enter your id", status: false })
 
@@ -119,8 +117,8 @@ function updatecategory(req, res) {
         connection.query(`select id  FROM category_tbl WHERE id = ${id}`, (err, result) => {
             console.log(result);
             if (result.length != 0) {
-                connection.query('UPDATE category_tbl SET category_name=? WHERE id=?',
-                    [category_name, id], (err, result1) => {
+                connection.query('UPDATE category_tbl SET category_name=?,logo=? WHERE id=?',
+                    [category_name, file.logo[0].filename,id], (err, result1) => {
                         console.log(result1);
                         if (result1) {
                             return res.send({ data: result1, msg: "update successfully", status: true })
@@ -138,4 +136,4 @@ function updatecategory(req, res) {
         return res.send({ data: error, status: false })
     }
 }
-module.exports = { addcategory, getcategory, deletecategory, updatecategory ,getcategoryById}
+module.exports = { addcategory, getcategory, deletecategory, updatecategory, getcategoryById }
